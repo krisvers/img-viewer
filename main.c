@@ -19,13 +19,14 @@ void draw_bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned in
 			if (bpp == 8) {
 				color = bytes[w + (h * width)];
 			} else if (bpp == 16) {
-				color = bytes[(w + (h * width)) * bpp + 1] | bytes[(w + (h * width)) * bpp];
+				color = (bytes[(w + (h * width)) * (bpp / 8) + 1] << 8) | (bytes[(w + (h * width)) * (bpp / 8)]);
 			} else if (bpp == 24) {
 				color = bytes[(w + (h * width)) * bpp + 2] | bytes[(w + (h * width)) * bpp + 1] | bytes[(w + (h * width)) * bpp];
 			} else {
 				color = bytes[(w + (h * width)) * bpp + 3] | bytes[(w + (h * width)) * bpp + 2] | bytes[(w + (h * width)) * bpp + 1] | bytes[(w + (h * width)) * bpp];
 			}
-			draw_bitmap(x + w, y + h, color);
+			draw(x + w, y + h, color);
+			printf("%x\n", color);
 		}
 	}
 }
@@ -38,6 +39,13 @@ int main(void) {
 		0
 	);
 	surface = SDL_GetWindowSurface(win);
+
+	unsigned int img[4] = {
+		0xFF0000, 0x00FF00,
+		0x0000FF, 0xFF00FF
+	};
+
+	draw_bitmap(0, 0, 2, 2, img, 32);
 
 	while (event.type != SDL_QUIT) {
 		SDL_UpdateWindowSurface(win);
